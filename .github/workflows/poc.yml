@@ -1,0 +1,113 @@
+name: Run Crash PoC
+
+
+
+on:
+
+  workflow_dispatch:
+  
+  push:
+  
+
+
+jobs:
+
+  run-poc:
+  
+    runs-on: macos-14
+    
+    steps:
+    
+      - name: Check out repository
+      
+        uses: actions/checkout@v4
+        
+
+
+      - name: Show Swift version
+      
+        run: swift --version
+        
+
+
+      - name: Resolve dependencies
+      
+        run: swift package resolve
+        
+
+
+      - name: Build PoC
+      
+        run: swift build -v 2>&1 | tee build.log
+        
+
+
+      - name: Run PoC and capture crash log
+      
+        shell: bash
+        
+        run: |
+        
+          set +e
+          
+          SWIFT_BACKTRACE=enable .build/debug/HE_PoC > crash.log 2>&1
+          
+          status=$?
+          
+          echo "Process exit status: $status" | tee -a crash.log
+          
+          cat crash.log
+          
+          exit 0
+          
+
+
+      - name: Upload build and crash logs
+      
+        if: always()
+        
+        uses: actions/upload-artifact@v4
+        
+        with:
+        
+          name: he-poc-logs
+          
+          path: |
+          
+            build.log
+            
+            crash.log
+            
+          if-no-files-found: warn
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
