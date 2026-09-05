@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "HE_PoC",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v26)], // Updated to match HomomorphicEncryption requirement
     dependencies: [
         .package(url: "https://github.com/apple/swift-homomorphic-encryption", branch: "main")
     ],
