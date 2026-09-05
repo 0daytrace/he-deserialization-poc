@@ -6,7 +6,7 @@ on:
 
 jobs:
   run-poc:
-    runs-on: macos-26
+    runs-on: macos-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -14,28 +14,21 @@ jobs:
       - name: Show Swift version
         run: swift --version
 
-      - name: Resolve dependencies
-        run: swift package resolve
-
-      - name: Build PoC
-        run: swift build -v 2>&1 | tee build.log
-
-      - name: Run PoC and capture crash log
+      - name: Build and Run PoC
         shell: bash
         run: |
           set +e
-          SWIFT_BACKTRACE=enable .build/debug/HE_PoC > crash.log 2>&1
-          status=$?
-          echo "Process exit status: $status" | tee -a crash.log
-          cat crash.log
-          exit 0
+          echo "=== Starting swift run ==="
+          # swift run will automatically build the project and then execute it.
+          # We capture ALL output (both build logs and runtime crashes) into one file.
+          swift run HE_PoC 2>&1 | tee full_output.log
+          echo "=== Process exit status: $? ===" | tee -a full_output.log
+        continue-on-error: true
 
-      - name: Upload build and crash logs
+      - name: Upload full output log
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: he-poc-logs
-          path: |
-            build.log
-            crash.log
+          name: he-poc-full-output
+          path: full_output.log
           if-no-files-found: warn
