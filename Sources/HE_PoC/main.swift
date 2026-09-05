@@ -2,8 +2,8 @@ import Foundation
 import HomomorphicEncryption
 
 do {
-    // Explicitly declare the type to give the compiler the context it needs
-    let params: EncryptionParameters<UInt64> = try .init(from: .insecure_N_16_logQ_5_5)
+    // Use the correct, valid predefined RLWE parameter that supports UInt64
+    let params = try EncryptionParameters<UInt64>(from: .insecure_n_16_logq_60_logt_15)
     
     // Context is generic over the Scheme (e.g., Bfv<UInt64>)
     let context = try Context<Bfv<UInt64>>(encryptionParameters: params)
