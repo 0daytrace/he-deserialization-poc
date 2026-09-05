@@ -2,8 +2,8 @@ import Foundation
 import HomomorphicEncryption
 
 do {
-    // EncryptionParameters is generic over the Scalar type (e.g., UInt64)
-    let params = try EncryptionParameters<UInt64>(from: .insecure_N_16_logQ_5_5)
+    // Explicitly declare the type to give the compiler the context it needs
+    let params: EncryptionParameters<UInt64> = try .init(from: .insecure_N_16_logQ_5_5)
     
     // Context is generic over the Scheme (e.g., Bfv<UInt64>)
     let context = try Context<Bfv<UInt64>>(encryptionParameters: params)
